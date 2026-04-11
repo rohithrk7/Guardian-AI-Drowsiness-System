@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Safety Portal</title>
+    <!-- Google Fonts for premium typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="overlay"></div>
+    
+    <!-- 1. AUTHENTICATION VIEW -->
+    <div class="view-section active" id="auth-view">
+        <div class="glass-panel auth-container">
+            
+            <div class="logo-wrap">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </div>
+                <h2 id="auth-title">Driver <span>Login</span></h2>
+            </div>
+            
+            <form id="auth-form" onsubmit="handleAuth(event)">
+                <div class="input-group">
+                    <input type="text" id="username" required>
+                    <label>Fleet ID / Name</label>
+                </div>
+                
+                <div class="extra-fields" id="register-fields">
+                    <div class="input-group">
+                        <input type="text" id="license-plate">
+                        <label>Vehicle License Plate</label>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" required>
+                    <label>Password</label>
+                </div>
+                
+                <button type="submit" class="btn" id="submit-btn">
+                    <span id="btn-text">Authenticate System</span>
+                    <div class="spinner" id="btn-spinner"></div>
+                </button>
+            </form>
+            
+            <div class="toggle-text" id="toggle-wrap">
+                New Fleet Driver? <span onclick="toggleMode()">Register Here</span>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- 2. DASHBOARD VIEW -->
+    <div class="view-section" id="dashboard-view">
+        <div class="glass-panel dashboard-container">
+            
+            <div class="dashboard-header">
+                <div class="driver-info">
+                    <h1>Welcome, <strong id="dash-username">Driver</strong></h1>
+                </div>
+                <div class="status-badge">SYSTEM STANDBY</div>
+            </div>
+
+            <div class="dashboard-metrics">
+                <div class="metric-card">
+                    <h3>LAST TRIP FATIGUE SCORE</h3>
+                    <p style="color: #00ffaa;" id="score-text">--/100</p>
+                </div>
+                <div class="metric-card">
+                    <h3>TOTAL TRIPS MONITORED</h3>
+                    <p id="trips-text">--</p>
+                </div>
+                
+                <!-- Chart container span both columns in the CSS grid -->
+                <div class="metric-card chart-card">
+                    <h3>AI INCIDENT HISTORY</h3>
+                    <div style="position: relative; height:200px; width:100%">
+                        <canvas id="incidentChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-main">
+                <button class="big-camera-btn" id="camera-btn" onclick="toggleCamera()">INITIALIZE CAMERA</button>
+                <div style="margin-top: 25px; color: #aaa; font-size: 14px;" id="camera-status-text">
+                    Network secured. Ready for deployment.
+                </div>
+            </div>
+
+            <a href="#" class="logout-link" onclick="logout()">Terminate Session</a>
+
+        </div>
+    </div>
+
+
+    <script src="script.js"></script>
+</body>
+</html>
