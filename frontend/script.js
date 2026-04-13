@@ -92,18 +92,64 @@ function resetUI() {
 }
 
 function startMetricSimulation() {
-    if (!isCameraRunning) return;
-    
-    // Simulate real-time metric fluctuations for the premium UI feel
-    // In a production environment, this would poll a real-time socket
-    const ear = (0.25 + Math.random() * 0.1).toFixed(2);
-    const fatigue = Math.floor(Math.random() * 10);
-    
-    document.getElementById('ear-value').innerText = ear;
-    document.getElementById('ear-progress').style.width = `${(ear / 0.4) * 100}%`;
-    
-    document.getElementById('fatigue-value').innerText = fatigue;
-    document.getElementById('fatigue-progress').style.width = `${fatigue}%`;
-
-    if (isCameraRunning) setTimeout(startMetricSimulation, 1000);
+    pollLiveStats();
 }
+
+async function pollLiveStats() {
+    if (!isCameraRunning) {
+        document.getElementById('alarm-status').innerText = "STANDBY";
+        document.getElementById('alarm-status').style.color = "var(--text-muted)";
+        document.getElementById('emergency-overlay').style.display = 'none';
+        return;
+    }
+    
+    try {
+        const res = await fetch('/api/live_stats');
+        const data = await res.json();
+        
+        // Update Metrics
+        document.getElementById('ear-value').innerText = data.ear.toFixed(3);
+        document.getElementById('ear-progress').style.width = `${Math.min((data.ear / 0.4) * 100, 100)}%`;
+        
+        document.getElementById('mar-value').innerText = data.mar.toFixed(3);
+        document.getElementById('mar-progress').style.width = `${Math.min((data.mar / 0.8) * 100, 100)}%`;
+        
+        document.getElementById('head-value').innerText = data.head_pos;
+        document.getElementById('alarm-status').innerText = data.state;
+
+        // EMERGENCY OVERLAY LOGIC
+        const overlay = document.getElementById('emergency-overlay');
+        const warnText = document.getElementById('warning-text');
+        
+        if (data.state !== "AWAKE" && data.state !== "NO_FACE" && data.state !== "STANDBY") {
+            overlay.style.display = 'block';
+            document.body.classList.add('alert-active');
+            
+            if (data.state === "DROWSY") {
+                warnText.innerText = "CRITICAL: WAKE UP IMMEDIATELY!";
+                overlay.style.background = "rgba(255, 0, 0, 0.95)";
+            } else if (data.state === "YAWNING") {
+                warnText.innerText = "WARNING: SIGNS OF FATIGUE DETECTED";
+                overlay.style.background = "rgba(255, 100, 0, 0.95)";
+            } else if (data.state.includes("DISTRACTED")) {
+                warnText.innerText = "CAUTION: KEEP EYES ON ROAD";
+                overlay.style.background = "rgba(255, 50, 0, 0.95)";
+            }
+        } else {
+            overlay.style.display = 'none';
+            document.body.classList.remove('alert-active');
+            
+            if (data.state === "NO_FACE") {
+                document.getElementById('alarm-status').style.color = "#ffaa00";
+            } else {
+                document.getElementById('alarm-status').style.color = "#00ffaa";
+            }
+        }
+
+    } catch (e) {
+        console.error("Live fetch error:", e);
+    }
+    
+    if (isCameraRunning) setTimeout(pollLiveStats, 200);
+}
+

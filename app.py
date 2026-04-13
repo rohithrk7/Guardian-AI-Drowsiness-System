@@ -92,6 +92,19 @@ def get_stats(username):
     
     return jsonify(user_data)
 
+@app.route('/api/live_stats', methods=['GET'])
+def live_stats():
+    live_path = os.path.join(os.path.dirname(__file__), 'live_stats.json')
+    if os.path.exists(live_path):
+        try:
+            with open(live_path, 'r') as f:
+                data = json.load(f)
+            return jsonify(data)
+        except:
+            return jsonify({"status": "error", "message": "Failed to read stats"}), 500
+    return jsonify({"ear": 0, "mar": 0, "head_pos": "None", "state": "STANDBY"})
+
+
 if __name__ == '__main__':
     print("==============================================")
     print("   DRIVER SAFETY WEB PROTOCOL ACTIVE          ")

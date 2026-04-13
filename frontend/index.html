@@ -86,19 +86,33 @@
                 </div>
 
                 <div class="metric-panel">
-                    <div class="metric-label">FATIGUE PROBABILITY</div>
-                    <div class="metric-value"><span id="fatigue-value">0</span>%</div>
-                    <div class="metric-bar"><div class="bar-fill" id="fatigue-progress" style="width: 0%"></div></div>
+                    <div class="metric-label">MOUTH ASPECT RATIO (MAR)</div>
+                    <div class="metric-value" id="mar-value">0.00</div>
+                    <div class="metric-bar"><div class="bar-fill" id="mar-progress" style="width: 0%"></div></div>
+                </div>
+
+                <div class="metric-panel">
+                    <div class="metric-label">HEAD POSITION</div>
+                    <div class="metric-value" id="head-value">Forward</div>
                 </div>
 
                 <div class="metric-panel alert-card" id="alarm-card">
-                    <div class="metric-label">ALARM STATUS</div>
-                    <div class="metric-value big-status" id="alarm-status">OFF</div>
+                    <div class="metric-label">SYSTEM STATE</div>
+                    <div class="metric-value big-status" id="alarm-status">STANDBY</div>
                 </div>
 
             </aside>
 
         </main>
+
+        <!-- LARGE EMERGENCY WARNING OVERLAY -->
+        <div id="emergency-overlay" class="emergency-banner" style="display: none;">
+            <div class="banner-content">
+                <span class="pulse-icon">⚠️</span>
+                <h1 id="warning-text">CRITICAL WARNING: WAKE UP!</h1>
+            </div>
+        </div>
+
 
         <footer class="main-footer">
             <p>&copy; 2026 GuardianAI Automotive Safety Systems | v2.4.0</p>

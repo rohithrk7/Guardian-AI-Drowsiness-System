@@ -18,6 +18,7 @@ from modules.ui import enhance_night_vision, draw_styled_landmarks
 from modules.alerts import send_emergency_alerts
 
 DB_PATH = os.path.join(os.path.dirname(__file__), 'database.json')
+LIVE_STATS_PATH = os.path.join(os.path.dirname(__file__), 'live_stats.json')
 
 def update_db(username, metric):
     db = {}
@@ -33,6 +34,18 @@ def update_db(username, metric):
     db[username][metric] += 1
     with open(DB_PATH, 'w') as f:
         json.dump(db, f)
+
+def write_live_stats(ear, mar, head_pos, state):
+    stats = {
+        "ear": round(float(ear), 3),
+        "mar": round(float(mar), 3),
+        "head_pos": head_pos,
+        "state": state,
+        "timestamp": time.time()
+    }
+    with open(LIVE_STATS_PATH, 'w') as f:
+        json.dump(stats, f)
+
 
 def main(username):
     # Log a new trip initialization
@@ -203,18 +216,23 @@ def main(username):
                 elif state == "DISTRACTED_WARNING":
                     cv2.putText(image, "WARNING: DISTRACTION BEEP", (w // 2 - 250, h // 2), 
                                 cv2.FONT_HERSHEY_DUPLEX, 1.2, (0, 165, 255), 3)
+                
+                # Update Live Stats for Dashboard
+                write_live_stats(avg_ear, mar, head_pos, state)
                     
         else:
             cv2.putText(image, "No Face Detected", (20, 45), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 165, 255), 3)
             frame_counter_ear = 0
             frame_counter_mar = 0
             distraction_start_time = None
+            write_live_stats(0.0, 0.0, "None", "NO_FACE")
             
         cv2.putText(image, "Night Vision Active - Controlled via Dashboard", (w - 350, 30), 
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
         
         cv2.imshow('Premium Driver Safety System [Night-Vision Active]', image)
         cv2.waitKey(5)
+
 
     cap.release()
     cv2.destroyAllWindows()
