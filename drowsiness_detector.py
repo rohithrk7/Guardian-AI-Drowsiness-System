@@ -8,13 +8,14 @@ import os
 
 # Import our custom modules
 from modules.config import (
-    EAR_THRESHOLD, DROWSINESS_FRAMES,
+    EAR_THRESHOLD, DROWSINESS_FRAMES, CRITICAL_DROWSY_LIMIT,
     MAR_THRESHOLD, YAWN_FRAMES, DISTRACTION_FRAMES,
     RIGHT_EYE_INDICES, LEFT_EYE_INDICES, LIP_INDICES
 )
 from modules.audio import speak_warning, play_beep
 from modules.vision import calculate_ear, calculate_mar, estimate_head_pose
 from modules.ui import enhance_night_vision, draw_styled_landmarks
+from modules.alerts import send_emergency_alerts
 
 DB_PATH = os.path.join(os.path.dirname(__file__), 'database.json')
 
@@ -57,6 +58,7 @@ def main(username):
     yawn_logged = False
     distraction_logged_warning = False
     distraction_logged_critical = False
+    emergency_logged = False
     
     # Setup Window
     cv2.namedWindow('Premium Driver Safety System [Night-Vision Active]', cv2.WINDOW_NORMAL)
@@ -111,9 +113,16 @@ def main(username):
                             update_db(username, "drowsy_count")
                             drowsy_logged = True
                         speak_warning("Critical Drowsiness! Wake up immediately!")
+
+                        # --- FEATURE 8: Emergency GPS & SMS/Bitrix24 ALERT ---
+                        if frame_counter_ear >= CRITICAL_DROWSY_LIMIT and not emergency_logged:
+                            print(f"!!! DISPATCHING EMERGENCY ALERT !!!")
+                            send_emergency_alerts(username)
+                            emergency_logged = True
                 else:
                     frame_counter_ear = 0
                     drowsy_logged = False
+                    emergency_logged = False
                 
                 # Check for Pre-Fatigue Yawning
                 if mar > MAR_THRESHOLD and not is_drowsy:

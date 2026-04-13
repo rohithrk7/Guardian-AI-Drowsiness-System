@@ -3,101 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Driver Safety Portal</title>
-    <!-- Google Fonts for premium typography -->
+    <title>GuardianAI | Drowsiness Detection System</title>
+    <!-- Premium Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="overlay"></div>
-    
-    <!-- 1. AUTHENTICATION VIEW -->
-    <div class="view-section active" id="auth-view">
-        <div class="glass-panel auth-container">
-            
-            <div class="logo-wrap">
-                <div class="logo-icon">
-                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/><circle cx="12" cy="12" r="3"/></svg>
-                </div>
-                <h2 id="auth-title">Driver <span>Login</span></h2>
+    <div class="app-container">
+        
+        <!-- TOP NAVIGATION BAR -->
+        <header class="main-header">
+            <div class="logo-section">
+                <div class="logo-box">G</div>
+                <div class="brand-name">Guardian<span>AI</span></div>
             </div>
             
-            <form id="auth-form" onsubmit="handleAuth(event)">
-                <div class="input-group">
-                    <input type="text" id="username" required>
-                    <label>Fleet ID / Name</label>
-                </div>
-                
-                <div class="extra-fields" id="register-fields">
-                    <div class="input-group">
-                        <input type="text" id="license-plate">
-                        <label>Vehicle License Plate</label>
+            <div class="header-center">
+                <h1>Live Monitoring Dashboard</h1>
+                <p>Real-time fatigue analysis using Computer Vision</p>
+            </div>
+
+            <div class="header-actions">
+                <button class="monitor-btn" id="camera-btn" onclick="toggleCamera()">START MONITORING</button>
+            </div>
+        </header>
+
+        <main class="dashboard-grid">
+            
+            <!-- LEFT SIDEBAR: DRIVER PROFILE -->
+            <aside class="sidebar-left">
+                <div class="panel-section">
+                    <h2 class="section-title">DRIVER PROFILE</h2>
+                    
+                    <div class="input-form">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="full-name" value="John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label>License ID</label>
+                            <input type="text" id="license-id" value="TX-9921-BA">
+                        </div>
+                        <div class="form-group">
+                            <label>Shift Start</label>
+                            <input type="time" id="shift-start" value="22:00">
+                        </div>
+                        <button class="action-btn cyan">Update Profile</button>
                     </div>
                 </div>
 
-                <div class="input-group">
-                    <input type="password" required>
-                    <label>Password</label>
+                <div class="panel-section log-section">
+                    <h2 class="section-title">INCIDENT LOGS</h2>
+                    <ul class="log-list" id="incident-logs">
+                        <li class="log-item initialized">System initialized...</li>
+                    </ul>
                 </div>
-                
-                <button type="submit" class="btn" id="submit-btn">
-                    <span id="btn-text">Authenticate System</span>
-                    <div class="spinner" id="btn-spinner"></div>
-                </button>
-            </form>
-            
-            <div class="toggle-text" id="toggle-wrap">
-                New Fleet Driver? <span onclick="toggleMode()">Register Here</span>
-            </div>
+            </aside>
 
-        </div>
-    </div>
-
-
-    <!-- 2. DASHBOARD VIEW -->
-    <div class="view-section" id="dashboard-view">
-        <div class="glass-panel dashboard-container">
-            
-            <div class="dashboard-header">
-                <div class="driver-info">
-                    <h1>Welcome, <strong id="dash-username">Driver</strong></h1>
-                </div>
-                <div class="status-badge">SYSTEM STANDBY</div>
-            </div>
-
-            <div class="dashboard-metrics">
-                <div class="metric-card">
-                    <h3>LAST TRIP FATIGUE SCORE</h3>
-                    <p style="color: #00ffaa;" id="score-text">--/100</p>
-                </div>
-                <div class="metric-card">
-                    <h3>TOTAL TRIPS MONITORED</h3>
-                    <p id="trips-text">--</p>
-                </div>
-                
-                <!-- Chart container span both columns in the CSS grid -->
-                <div class="metric-card chart-card">
-                    <h3>AI INCIDENT HISTORY</h3>
-                    <div style="position: relative; height:200px; width:100%">
-                        <canvas id="incidentChart"></canvas>
+            <!-- CENTER: AI FEED STATUS -->
+            <section class="feed-container">
+                <div class="video-placeholder">
+                    <div class="status-overlay">
+                        <span class="badge standby" id="feed-status-badge">STANDBY</span>
+                    </div>
+                    
+                    <div class="placeholder-content">
+                        <div class="icon-wrap">
+                            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        </div>
+                        <p id="camera-status-text">Camera is currently OFF</p>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div class="dashboard-main">
-                <button class="big-camera-btn" id="camera-btn" onclick="toggleCamera()">INITIALIZE CAMERA</button>
-                <div style="margin-top: 25px; color: #aaa; font-size: 14px;" id="camera-status-text">
-                    Network secured. Ready for deployment.
+            <!-- RIGHT SIDEBAR: METRICS -->
+            <aside class="sidebar-right">
+                
+                <div class="metric-panel">
+                    <div class="metric-label">EYE ASPECT RATIO (EAR)</div>
+                    <div class="metric-value" id="ear-value">0.00</div>
+                    <div class="metric-bar"><div class="bar-fill" id="ear-progress" style="width: 0%"></div></div>
                 </div>
-            </div>
 
-            <a href="#" class="logout-link" onclick="logout()">Terminate Session</a>
+                <div class="metric-panel">
+                    <div class="metric-label">FATIGUE PROBABILITY</div>
+                    <div class="metric-value"><span id="fatigue-value">0</span>%</div>
+                    <div class="metric-bar"><div class="bar-fill" id="fatigue-progress" style="width: 0%"></div></div>
+                </div>
 
-        </div>
+                <div class="metric-panel alert-card" id="alarm-card">
+                    <div class="metric-label">ALARM STATUS</div>
+                    <div class="metric-value big-status" id="alarm-status">OFF</div>
+                </div>
+
+            </aside>
+
+        </main>
+
+        <footer class="main-footer">
+            <p>&copy; 2026 GuardianAI Automotive Safety Systems | v2.4.0</p>
+        </footer>
+
     </div>
 
-
+    <!-- Scripting -->
     <script src="script.js"></script>
 </body>
 </html>
