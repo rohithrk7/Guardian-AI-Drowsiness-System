@@ -24,8 +24,8 @@ Make sure you have **Python 3.8 or higher** installed. You can download it from 
 ### 2. Clone the Repository
 Open your terminal (or CMD) and run:
 ```bash
-git clone https://github.com/YOUR_USERNAME/DDDS.git
-cd DDDS
+git clone https://github.com/rohithrk7/Guardian-AI-Drowsiness-System.git
+cd Guardian-AI-Drowsiness-System
 ```
 
 ### 3. Install Dependencies
