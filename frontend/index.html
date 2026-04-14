@@ -14,13 +14,13 @@
         <!-- TOP NAVIGATION BAR -->
         <header class="main-header">
             <div class="logo-section">
-                <div class="logo-box">G</div>
-                <div class="brand-name">Guardian<span>AI</span></div>
+                <div class="logo-box">D</div>
+                <div class="brand-name">DDDS</div>
             </div>
             
             <div class="header-center">
-                <h1>Live Monitoring Dashboard</h1>
-                <p>Real-time fatigue analysis using Computer Vision</p>
+                <h1>DDDS</h1>
+                <p>Driver Drowsiness Detection System</p>
             </div>
 
             <div class="header-actions">
@@ -35,20 +35,12 @@
                 <div class="panel-section">
                     <h2 class="section-title">DRIVER PROFILE</h2>
                     
-                    <div class="input-form">
-                        <div class="form-group">
-                            <label>Full Name</label>
-                            <input type="text" id="full-name" value="John Doe">
-                        </div>
-                        <div class="form-group">
-                            <label>License ID</label>
-                            <input type="text" id="license-id" value="TX-9921-BA">
-                        </div>
-                        <div class="form-group">
-                            <label>Shift Start</label>
-                            <input type="time" id="shift-start" value="22:00">
-                        </div>
-                        <button class="action-btn cyan">Update Profile</button>
+                    <div class="profile-display">
+                        <div class="p-item"><label>Name:</label> <span id="disp-name">---</span></div>
+                        <div class="p-item"><label>Phone:</label> <span id="disp-phone">---</span></div>
+                        <div class="p-item"><label>Vehicle:</label> <span id="disp-vehicle">---</span></div>
+                        <div class="p-item"><label>Age:</label> <span id="disp-age">---</span></div>
+                        <div class="p-item"><label>License:</label> <span id="disp-license">---</span></div>
                     </div>
                 </div>
 
@@ -58,27 +50,66 @@
                         <li class="log-item initialized">System initialized...</li>
                     </ul>
                 </div>
+
+                <!-- NEW: EMERGENCY CONTACT PANEL -->
+                <div class="panel-section emergency-panel">
+                    <h2 class="section-title" style="color: #ff3366;">EMERGENCY CONTACT</h2>
+                    <div class="contact-info">
+                        <p class="contact-name" id="contact-name-display">Sara Connor</p>
+                        <p class="contact-phone" id="contact-phone-display">+1 (555) 012-3456</p>
+                    </div>
+                    <div class="gps-coords">
+                        <span class="gps-label">GPS:</span>
+                        <span id="gps-display">Locating...</span>
+                    </div>
+                    <button class="action-btn red" onclick="sendManualAlert()">🚨 SEND ALERT NOW</button>
+                    <button class="settings-mini-btn" onclick="toggleContactEdit()">Update Contact Details</button>
+                    
+                    <div id="contact-edit" class="hidden">
+                        <input type="text" id="edit-contact-name" placeholder="Name">
+                        <input type="text" id="edit-contact-phone" placeholder="Phone">
+                        <button class="action-btn mini" onclick="saveContact()">Save</button>
+                    </div>
+                </div>
             </aside>
 
             <!-- CENTER: AI FEED STATUS -->
             <section class="feed-container">
                 <div class="video-placeholder">
                     <div class="status-overlay">
-                        <span class="badge standby" id="feed-status-badge">STANDBY</span>
+                        <div class="pulse-wrapper">
+                            <div class="pulse-circle pulse-active" id="status-pulse"></div>
+                            <span class="badge active" id="feed-status-badge">STANDBY</span>
+                        </div>
                     </div>
                     
-                    <div class="placeholder-content">
+                    <div class="placeholder-content" id="placeholder-content">
                         <div class="icon-wrap">
                             <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                         </div>
                         <p id="camera-status-text">Camera is currently OFF</p>
                     </div>
+
+                    <img id="main-feed" class="video-feed" src="" alt="AI Feed">
                 </div>
             </section>
 
             <!-- RIGHT SIDEBAR: METRICS -->
             <aside class="sidebar-right">
                 
+                <!-- NEW: FATIGUE SPEEDOMETER GAUGE -->
+                <div class="metric-panel gauge-panel">
+                    <div class="metric-label">TOTAL FATIGUE SCORE</div>
+                    <div class="gauge-container">
+                        <svg class="gauge-svg" viewBox="0 0 100 100">
+                            <circle class="gauge-bg" cx="50" cy="50" r="45"></circle>
+                            <circle class="gauge-fill" id="fatigue-gauge" cx="50" cy="50" r="45"></circle>
+                        </svg>
+                        <div class="gauge-value" id="total-fatigue-value">0%</div>
+                    </div>
+                    <div class="gauge-status" id="fatigue-msg">STABLE</div>
+                </div>
+
                 <div class="metric-panel">
                     <div class="metric-label">EYE ASPECT RATIO (EAR)</div>
                     <div class="metric-value" id="ear-value">0.00</div>
@@ -118,6 +149,48 @@
             <p>&copy; 2026 GuardianAI Automotive Safety Systems | v2.4.0</p>
         </footer>
 
+    </div>
+
+    <!-- PREMIUM LOGIN OVERLAY -->
+    <div id="login-screen" class="login-overlay">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-logo">D</div>
+                <h1>DDDS Login</h1>
+                <p>Driver Detection System</p>
+            </div>
+            
+            <form id="login-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" id="login-name" required placeholder="Ex: Rahul Sharma">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number *</label>
+                        <input type="text" id="login-phone" required placeholder="+91 XXXX XXX XXX">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Vehicle Plate No. *</label>
+                        <input type="text" id="login-vehicle" required placeholder="MH-XX-XX-XXXX">
+                    </div>
+                    <div class="form-group">
+                        <label>Age *</label>
+                        <input type="number" id="login-age" required placeholder="Years">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>License Number (Optional)</label>
+                    <input type="text" id="login-license" placeholder="LIC-XXXXXXXX">
+                </div>
+                
+                <button type="submit" class="login-btn">ENTER DASHBOARD</button>
+            </form>
+        </div>
     </div>
 
     <!-- Scripting -->

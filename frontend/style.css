@@ -201,6 +201,17 @@ body {
     align-items: center;
 }
 
+.video-feed {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+}
+
+.hidden {
+    display: none !important;
+}
+
 .status-overlay {
     position: absolute;
     top: 25px;
@@ -216,7 +227,159 @@ body {
 }
 
 .badge.standby { background: rgba(0, 229, 255, 0.1); color: var(--cyan-primary); }
-.badge.active { background: rgba(255, 51, 102, 0.1); color: #ff3366; border-color: #ff3366; }
+.badge.active { background: rgba(0, 255, 170, 0.1); color: #00ffaa; border-color: #00ffaa; }
+
+/* Pulse Indicator */
+.status-overlay {
+    display: flex;
+    align-items: center;
+}
+
+.pulse-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.pulse-circle {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    position: relative;
+    transition: 0.3s;
+}
+
+.pulse-circle::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    background: inherit;
+    animation: breathing 2s infinite;
+    opacity: 0.5;
+}
+
+@keyframes breathing {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(2.5); opacity: 0; }
+}
+
+.pulse-active { background: #00ffaa; box-shadow: 0 0 10px #00ffaa; }
+.pulse-warning { background: #ffaa00; box-shadow: 0 0 10px #ffaa00; }
+.pulse-critical { background: #ff3366; box-shadow: 0 0 10px #ff3366; }
+
+.emergency-panel {
+    border: 2px solid rgba(255, 51, 102, 0.3);
+    background: rgba(255, 51, 102, 0.05);
+}
+
+.contact-name { font-weight: 700; font-size: 18px; margin-bottom: 2px; color: var(--text-main); }
+.contact-phone { color: var(--text-muted); font-size: 14px; margin-bottom: 15px; }
+
+.gps-coords {
+    background: rgba(0,0,0,0.5);
+    padding: 12px;
+    border-radius: 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 51, 102, 0.2);
+    color: #ff3366;
+}
+
+.gps-label { color: var(--text-muted); margin-right: 8px; font-weight: 400; text-transform: uppercase; font-size: 10px; }
+
+.action-btn.red {
+    background: linear-gradient(135deg, #ff3366, #ff8000);
+    margin-bottom: 12px;
+    box-shadow: 0 8px 20px rgba(255, 51, 102, 0.4);
+    height: 50px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* --- GAUGE SPEEDOMETER --- */
+.gauge-panel {
+    text-align: center;
+}
+
+.gauge-container {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    margin: 0 auto 15px;
+}
+
+.gauge-svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.gauge-bg {
+    fill: none;
+    stroke: rgba(255,255,255,0.05);
+    stroke-width: 8;
+}
+
+.gauge-fill {
+    fill: none;
+    stroke: var(--cyan-primary);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 283; /* 2 * PI * R (45) */
+    stroke-dashoffset: 283;
+    transition: stroke-dashoffset 0.5s ease-out, stroke 0.5s;
+    filter: drop-shadow(0 0 5px var(--cyan-primary));
+}
+
+.gauge-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.gauge-status {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+}
+
+.action-btn.mini {
+    padding: 6px 10px;
+    font-size: 11px;
+}
+
+.settings-mini-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 11px;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+#contact-edit {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#contact-edit input {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--border-dim);
+    padding: 8px;
+    border-radius: 4px;
+    color: white;
+    font-size: 12px;
+}
 
 .placeholder-content {
     text-align: center;
@@ -291,6 +454,104 @@ body {
     align-items: center;
 }
 
+/* --- DRIVER PROFILE DISPLAY --- */
+.profile-display {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.p-item {
+    font-size: 14px;
+}
+
+.p-item label {
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-right: 8px;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.p-item span {
+    color: var(--cyan-primary);
+    font-weight: 600;
+}
+
+/* --- LOGIN SYSTEM --- */
+.login-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #05080c;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(20px);
+}
+
+.login-card {
+    background: var(--panel-dark);
+    width: 100%;
+    max-width: 500px;
+    padding: 40px;
+    border-radius: 24px;
+    border: 1px solid var(--border-dim);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.login-logo {
+    width: 60px; height: 60px;
+    background: var(--btn-cyan);
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 15px;
+    font-size: 32px;
+    font-weight: 800;
+    box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
+}
+
+.login-header h1 { font-size: 28px; font-weight: 700; margin-bottom: 5px; }
+.login-header p { color: var(--text-muted); font-size: 14px; }
+
+.form-row {
+    display: flex;
+    gap: 15px;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 12px;
+    background: var(--btn-cyan);
+    border: none;
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: 0.3s;
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0, 210, 255, 0.3);
+}
+
+/* Hide login when active */
+.login-hidden {
+    display: none !important;
+}
+
 /* --- EMERGENCY BANNER --- */
 .emergency-banner {
     position: fixed;
@@ -339,5 +600,74 @@ body {
     0% { transform: scale(1); }
     50% { transform: scale(1.3); }
     100% { transform: scale(1); }
+}
+
+/* --- MOBILE RESPONSIVENESS --- */
+@media (max-width: 1100px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        padding-bottom: 100px;
+    }
+    
+    .sidebar-left, .sidebar-right {
+        order: 2;
+    }
+    
+    .feed-container {
+        order: 1;
+        min-height: 350px;
+        height: 50vw;
+    }
+
+    .app-container {
+        padding: 0 15px;
+        overflow-y: auto;
+        height: auto;
+    }
+    
+    body {
+        overflow-y: auto;
+        height: auto;
+    }
+
+    .header-center {
+        margin-left: 20px;
+    }
+    
+    .header-center h1 { font-size: 18px; }
+    .header-center p { font-size: 11px; }
+}
+
+@media (max-width: 600px) {
+    .main-header {
+        flex-direction: column;
+        height: auto;
+        padding: 20px 0;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .header-center {
+        margin: 0;
+        text-align: center;
+    }
+
+    .login-card {
+        padding: 25px;
+        margin: 15px;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .feed-container {
+        min-height: 250px;
+    }
+
+    .banner-content h1 {
+        font-size: 20px;
+    }
 }
 
