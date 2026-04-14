@@ -1,4 +1,5 @@
 let currentUser = 'Driver';
+let userRegistryData = {}; // Persistent storage for registry info
 let incidentChartInstance = null;
 
 // Auto-initialize Dashboard on page load
@@ -6,6 +7,15 @@ window.addEventListener('DOMContentLoaded', () => {
     // We wait for login now
     setupLogin();
 });
+
+function promptAdminAccess() {
+    const pass = prompt("Enter Administrator Password:");
+    if (pass === "admin_guardian_2026") {
+        window.location.href = "/admin";
+    } else {
+        alert("❌ Access Denied: Invalid Admin Credentials.");
+    }
+}
 
 function setupLogin() {
     const loginForm = document.getElementById('login-form');
@@ -15,12 +25,20 @@ function setupLogin() {
         const details = {
             name: document.getElementById('login-name').value,
             phone: document.getElementById('login-phone').value,
+            tg_id: document.getElementById('login-tg-id').value,
             vehicle: document.getElementById('login-vehicle').value,
             age: document.getElementById('login-age').value,
-            license: document.getElementById('login-license').value || "N/A"
+            license: document.getElementById('login-license').value || "N/A",
+            pass: document.getElementById('login-pass').value
         };
+
+        if (details.pass !== "guardian2026") {
+            alert("❌ Access Denied: Incorrect System Password.");
+            return;
+        }
         
         currentUser = details.name;
+        userRegistryData = details; // Capture for Camera start
         updateProfileDisplay(details);
         
         // Hide Login
@@ -66,23 +84,26 @@ async function toggleCamera() {
         badge.innerText = "LIVE";
         badge.className = "badge active";
         addLogItem("AI Monitoring initiated.", "success");
-
-        // SHOW VIDEO FEED
-        const feed = document.getElementById('main-feed');
-        const placeholder = document.getElementById('placeholder-content');
-        feed.src = "/video_feed";
-        feed.style.display = "block";
-        placeholder.classList.add('hidden');
         
         try {
+            // 1. Send FULL registry data to backend
             const response = await fetch('/start_camera', { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: currentUser })
+                body: JSON.stringify({ 
+                    ...userRegistryData,
+                    username: currentUser 
+                })
             });
-            isCameraRunning = true;
             
-            // Start simulated real-time metrics for UI feel
+            // Then show feed
+            const feed = document.getElementById('main-feed');
+            const placeholder = document.getElementById('placeholder-content');
+            feed.src = "/video_feed?t=" + new Date().getTime();
+            feed.style.display = "block";
+            placeholder.classList.add('hidden');
+            
+            isCameraRunning = true;
             startMetricSimulation();
 
         } catch (error) {

@@ -1,9 +1,6 @@
-Flask>=3.0.0
-opencv-python>=4.8.0
-mediapipe>=0.10.0
-numpy>=1.24.0
-pyttsx3>=2.90
-gunicorn==21.2.0
-geocoder>=1.38.1
-requests>=2.31.0
-
+flask
+opencv-python
+mediapipe
+requests
+geocoder
+numpy

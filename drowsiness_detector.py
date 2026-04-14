@@ -5,6 +5,7 @@ import time
 import argparse
 import json
 import os
+import threading
 
 # Import our custom modules
 from modules.config import (
@@ -22,19 +23,20 @@ DB_PATH = os.path.join(os.path.dirname(__file__), 'database.json')
 LIVE_STATS_PATH = os.path.join(os.path.dirname(__file__), 'live_stats.json')
 
 def update_db(username, metric):
-    db = {}
-    if os.path.exists(DB_PATH):
-        with open(DB_PATH, 'r') as f:
-            try:
-                db = json.load(f)
-            except:
-                pass
-    if username not in db:
-        db[username] = {"drowsy_count": 0, "yawn_count": 0, "distraction_count": 0, "trips": 0}
+    import sqlite3
+    db_sqlite = os.path.join(os.path.dirname(__file__), 'guardian.db')
+    conn = sqlite3.connect(db_sqlite)
+    c = conn.cursor()
     
-    db[username][metric] += 1
-    with open(DB_PATH, 'w') as f:
-        json.dump(db, f)
+    # Check if user exists (should exist from login, but for safety)
+    c.execute("SELECT username FROM drivers WHERE username=?", (username,))
+    if c.fetchone() is None:
+        c.execute("INSERT INTO drivers (username, trips) VALUES (?, 0)", (username,))
+        
+    query = f"UPDATE drivers SET {metric} = {metric} + 1 WHERE username = ?"
+    c.execute(query, (username,))
+    conn.commit()
+    conn.close()
 
 def write_live_stats(ear, mar, head_pos, state):
     stats = {
@@ -49,8 +51,9 @@ def write_live_stats(ear, mar, head_pos, state):
 
 
 class DrowsinessDetector:
-    def __init__(self, username):
+    def __init__(self, username, telegram_id=None):
         self.username = username
+        self.telegram_id = telegram_id
         self.mp_face_mesh = mp.solutions.face_mesh
         self.face_mesh = self.mp_face_mesh.FaceMesh(
             max_num_faces=1,
@@ -62,6 +65,7 @@ class DrowsinessDetector:
         self.frame_counter_ear = 0
         self.frame_counter_mar = 0
         self.distraction_start_time = None
+        self.drowsy_incident_count = 0
         
         # Event Latches so we only log an incident once per active occurrence
         self.drowsy_logged = False
@@ -110,13 +114,18 @@ class DrowsinessDetector:
                         is_drowsy = True
                         state = "DROWSY"
                         if not self.drowsy_logged:
+                            self.drowsy_incident_count += 1
                             update_db(self.username, "drowsy_count")
                             self.drowsy_logged = True
+                            print(f"DEBUG: Drowsiness Incident #{self.drowsy_incident_count}")
+
                         speak_warning("Critical Drowsiness! Wake up immediately!")
 
-                        if self.frame_counter_ear >= CRITICAL_DROWSY_LIMIT and not self.emergency_logged:
-                            print(f"!!! DISPATCHING EMERGENCY ALERT !!!")
-                            send_emergency_alerts(self.username)
+                        # Send alert on EVERY incident as requested
+                        if not self.emergency_logged:
+                            print(f"!!! DISPATCHING IMMEDIATE EMERGENCY ALERT TO {self.telegram_id} !!!")
+                            alert_thread = threading.Thread(target=send_emergency_alerts, args=(self.username, self.telegram_id), daemon=True)
+                            alert_thread.start()
                             self.emergency_logged = True
                 else:
                     self.frame_counter_ear = 0

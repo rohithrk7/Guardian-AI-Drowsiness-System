@@ -671,3 +671,31 @@ body {
     }
 }
 
+/* --- ADMIN CORNER BUTTON --- */
+.admin-access-corner {
+    position: fixed;
+    top: 25px;
+    left: 40px;
+    z-index: 10000;
+}
+
+.admin-corner-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #8fa3ad;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    backdrop-filter: blur(10px);
+}
+
+.admin-corner-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-color: #00d2ff;
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
+}
+

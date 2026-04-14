@@ -1,6 +1,16 @@
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
 venv/
 .env
-.vscode/
+
+# Database
+*.db
+*.db-journal
+
+# Project specific
+temp_stats.json
+test_tg.py
+test_audio.py
+*.log

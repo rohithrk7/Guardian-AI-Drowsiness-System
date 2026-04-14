@@ -28,5 +28,5 @@ CRITICAL_DROWSY_LIMIT = 45   # Roughly 2-3 seconds of closed eyes
 # 1. Get Token from @BotFather
 # 2. Get ID from @userinfobot
 TELEGRAM_BOT_TOKEN = "8678903058:AAE-s48dA91Wldt-EZ4OMeIF_bCf2Y59K_c"
-TELEGRAM_CHAT_ID = "668854268"
+TELEGRAM_CHAT_ID = "1462899308"
 
